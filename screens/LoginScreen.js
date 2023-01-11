@@ -28,8 +28,7 @@ const LoginScreen = () => {
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width - 16 * 2,
   });
-  // const [dimensions, setDimensions] = useState(Dimensions.get('window').width - 16 * 2);
-  // console.log(Platform.OS);
+  console.log(Platform.OS);
 
   const keyboarHide = () => {
     setIsShowKeyboard(false);
@@ -43,7 +42,7 @@ const LoginScreen = () => {
     const onChange = () => {
       const width = Dimensions.get('window').width - 16 * 2;
       const height = Dimensions.get('window').height;
-      console.log({ height, width }, dimensions);
+      // console.log({ height, width }, dimensions);
       setDimensions({ height, width });
     };
     const subscription = Dimensions.addEventListener('change', onChange);
