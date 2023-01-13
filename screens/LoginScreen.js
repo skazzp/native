@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import {
   ImageBackground,
@@ -19,7 +20,7 @@ const initialState = {
   pass: '',
 };
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [showPass, onShowPass] = useState(true);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
@@ -42,7 +43,6 @@ const LoginScreen = () => {
     const onChange = () => {
       const width = Dimensions.get('window').width - 16 * 2;
       const height = Dimensions.get('window').height;
-      // console.log({ height, width }, dimensions);
       setDimensions({ height, width });
     };
     const subscription = Dimensions.addEventListener('change', onChange);
@@ -65,11 +65,11 @@ const LoginScreen = () => {
           >
             <KeyboardAvoidingView
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={styles.containerRegistrationScreen}
+              style={styles.containerLogin}
             >
-              <Text style={styles.text}>Login</Text>
+              <Text style={styles.title}>Login</Text>
               <SafeAreaView>
-                <View style={styles.ViewLoginInput}>
+                <View style={styles.loginInput}>
                   <TextInput
                     onChangeText={value => setState(prevState => ({ ...prevState, login: value }))}
                     placeholder="Login"
@@ -79,7 +79,7 @@ const LoginScreen = () => {
                   />
                 </View>
 
-                <View style={styles.ViewPassInput}>
+                <View style={styles.passInput}>
                   <TextInput
                     style={styles.input}
                     placeholder={'Password'}
@@ -102,11 +102,11 @@ const LoginScreen = () => {
                 </TouchableOpacity>
               </SafeAreaView>
               <TouchableOpacity
-                style={styles.buttonComeIn}
-                onPress={keyboarHide}
+                style={styles.changePageBtn}
+                onPress={() => navigation.navigate('Register')}
                 activeOpacity={0.7}
               >
-                <Text style={styles.buttonTextComeIn}>Don't have an account? Register</Text>
+                <Text style={styles.changePageText}>Don't have an account? Register</Text>
               </TouchableOpacity>
             </KeyboardAvoidingView>
           </View>
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
-  text: {
+  title: {
     fontFamily: 'Roboto-Regular',
     fontStyle: 'normal',
     fontWeight: '500',
@@ -151,17 +151,12 @@ const styles = StyleSheet.create({
     color: '#1B4371',
   },
 
-  ViewLoginInput: {
+  loginInput: {
     marginBottom: 16,
     marginLeft: 16,
     marginRight: 16,
   },
-  ViewMailInput: {
-    marginBottom: 16,
-    marginLeft: 16,
-    marginRight: 16,
-  },
-  ViewPassInput: {
+  passInput: {
     position: 'relative',
     marginBottom: 43,
     marginLeft: 16,
@@ -180,7 +175,7 @@ const styles = StyleSheet.create({
     borderColor: '#E8E8E8',
     backgroundColor: '#F6F6F6',
   },
-  containerRegistrationScreen: {},
+  containerLogin: {},
   button: {
     alignItems: 'center',
     paddingTop: 16,
@@ -200,11 +195,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
   },
-  buttonComeIn: {
+  changePageBtn: {
     marginLeft: 'auto',
     marginRight: 'auto',
   },
-  buttonTextComeIn: {
+  changePageText: {
     color: '#1B4371',
     fontFamily: 'Roboto-Regular',
     fontStyle: 'normal',
