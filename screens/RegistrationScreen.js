@@ -14,24 +14,27 @@ import {
   Platform,
   Image,
 } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { registerUser } from '../redux/auth/authOperation';
 
 const addButton = require('../assets/images/add.png');
 
 const initialState = {
   login: '',
-  pass: '',
+  email: '',
+  password: '',
 };
 
 const RegistrationScreen = ({ navigation }) => {
   const [showPass, onShowPass] = useState(true);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
-
   const [dimensions, setDimensions] = useState({
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width - 16 * 2,
   });
-  console.log(Platform.OS);
+  const dispatch = useDispatch();
+  // console.log(Platform.OS);
 
   const keyboarHide = () => {
     setIsShowKeyboard(false);
@@ -40,6 +43,11 @@ const RegistrationScreen = ({ navigation }) => {
   };
 
   const onShow = () => onShowPass(prevShow => !prevShow);
+
+  const handleSubmit = () => {
+    dispatch(registerUser(state));
+    keyboarHide();
+  };
 
   useEffect(() => {
     const onChange = () => {
@@ -89,7 +97,15 @@ const RegistrationScreen = ({ navigation }) => {
                     onFocus={() => setIsShowKeyboard(true)}
                   />
                 </View>
-
+                <View style={styles.loginInput}>
+                  <TextInput
+                    onChangeText={value => setState(prevState => ({ ...prevState, email: value }))}
+                    placeholder="E-mail"
+                    placeholderTextColor="#BDBDBD"
+                    style={styles.input}
+                    onFocus={() => setIsShowKeyboard(true)}
+                  />
+                </View>
                 <View style={styles.passInput}>
                   <TextInput
                     style={styles.input}
@@ -97,7 +113,9 @@ const RegistrationScreen = ({ navigation }) => {
                     placeholderTextColor="#BDBDBD"
                     secureTextEntry={showPass}
                     onFocus={() => setIsShowKeyboard(true)}
-                    onChangeText={value => setState(prevState => ({ ...prevState, pass: value }))}
+                    onChangeText={value =>
+                      setState(prevState => ({ ...prevState, password: value }))
+                    }
                   />
                   <TouchableOpacity
                     style={{ position: 'absolute', right: 16, top: 16 }}
@@ -108,7 +126,7 @@ const RegistrationScreen = ({ navigation }) => {
                   </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={styles.button} onPress={keyboarHide} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.button} onPress={handleSubmit} activeOpacity={0.7}>
                   <Text style={styles.buttonText}>Register</Text>
                 </TouchableOpacity>
               </SafeAreaView>

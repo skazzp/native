@@ -14,10 +14,12 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../redux/auth/authOperation';
 
 const initialState = {
-  login: '',
-  pass: '',
+  email: '',
+  password: '',
 };
 
 const LoginScreen = ({ navigation }) => {
@@ -29,7 +31,8 @@ const LoginScreen = ({ navigation }) => {
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width - 16 * 2,
   });
-  console.log(Platform.OS);
+  const dispatch = useDispatch();
+  // console.log(Platform.OS);
 
   const keyboarHide = () => {
     setIsShowKeyboard(false);
@@ -38,6 +41,11 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const onShow = () => onShowPass(prevShow => !prevShow);
+
+  const handleSubmit = () => {
+    dispatch(loginUser(state));
+    keyboarHide();
+  };
 
   useEffect(() => {
     const onChange = () => {
@@ -71,8 +79,8 @@ const LoginScreen = ({ navigation }) => {
               <SafeAreaView>
                 <View style={styles.loginInput}>
                   <TextInput
-                    onChangeText={value => setState(prevState => ({ ...prevState, login: value }))}
-                    placeholder="Login"
+                    onChangeText={value => setState(prevState => ({ ...prevState, email: value }))}
+                    placeholder="E-mail"
                     placeholderTextColor="#BDBDBD"
                     style={styles.input}
                     onFocus={() => setIsShowKeyboard(true)}
@@ -86,7 +94,9 @@ const LoginScreen = ({ navigation }) => {
                     placeholderTextColor="#BDBDBD"
                     secureTextEntry={showPass}
                     onFocus={() => setIsShowKeyboard(true)}
-                    onChangeText={value => setState(prevState => ({ ...prevState, pass: value }))}
+                    onChangeText={value =>
+                      setState(prevState => ({ ...prevState, password: value }))
+                    }
                   />
                   <TouchableOpacity
                     style={{ position: 'absolute', right: 16, top: 16 }}
@@ -97,7 +107,7 @@ const LoginScreen = ({ navigation }) => {
                   </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={styles.button} onPress={keyboarHide} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.button} onPress={handleSubmit} activeOpacity={0.7}>
                   <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
               </SafeAreaView>

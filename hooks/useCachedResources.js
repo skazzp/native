@@ -16,7 +16,7 @@ export default function useCachedResources() {
           'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf'),
           'Roboto-Bold': require('../assets/fonts/Roboto-Bold.ttf'),
         });
-        console.log('hello');
+        // console.log('hello');
       } catch (e) {
         console.warn(e);
       } finally {
