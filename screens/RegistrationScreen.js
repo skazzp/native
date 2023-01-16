@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { registerUser } from '../redux/auth/authOperation';
+import * as ImagePicker from 'expo-image-picker';
 
 const addButton = require('../assets/images/add.png');
 
@@ -33,6 +34,8 @@ const RegistrationScreen = ({ navigation }) => {
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width - 16 * 2,
   });
+  const [image, setImage] = useState(null);
+
   const dispatch = useDispatch();
   // console.log(Platform.OS);
 
@@ -40,6 +43,23 @@ const RegistrationScreen = ({ navigation }) => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
     console.log(state);
+  };
+
+  const pickImage = async () => {
+    //  const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
   };
 
   const onShow = () => onShowPass(prevShow => !prevShow);
@@ -78,11 +98,8 @@ const RegistrationScreen = ({ navigation }) => {
               style={styles.containerReg}
             >
               <View style={styles.avatarBox}>
-                {/* <Image style={styles.avatarImage} source={} /> */}
-                <TouchableOpacity
-                  style={styles.addAvatarButton}
-                  // onPress={}
-                >
+                {image && <Image source={{ uri: image }} style={styles.avatarImage} />}
+                <TouchableOpacity style={styles.addAvatarButton} onPress={pickImage}>
                   <Image source={addButton} />
                 </TouchableOpacity>
               </View>
@@ -251,6 +268,11 @@ const styles = StyleSheet.create({
     right: -12.5,
     width: 25,
     height: 25,
+  },
+  avatarImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 16,
   },
 });
 
