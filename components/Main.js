@@ -15,7 +15,7 @@ const Main = () => {
   useEffect(() => {
     onAuthStateChanged(auth, user => {
       if (user) {
-        console.log('logged in', user);
+        // console.log('logged in', user);
         dispatch(
           updateUserData({
             login: user.displayName,
@@ -26,8 +26,7 @@ const Main = () => {
         );
         dispatch(updateLoginState(true));
       } else {
-        console.log('not logged in');
-        // dispatch(updateUserData({}));
+        // console.log('not logged in');
         dispatch(updateLoginState(false));
       }
     });

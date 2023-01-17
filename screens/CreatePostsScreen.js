@@ -3,8 +3,11 @@ import { Camera } from 'expo-camera';
 import { useEffect, useState } from 'react';
 import { Feather } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import { db, storage } from '../firebase/config';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { db, storage } from '../firebase/config';
+import { collection, addDoc } from 'firebase/firestore';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../redux/auth/authSelectors';
 
 const CreatePostsScreen = () => {
   const [photo, setPhoto] = useState(null);
@@ -15,43 +18,54 @@ const CreatePostsScreen = () => {
   const [address, setAddress] = useState(null);
   const [photoLink, setPhotoLink] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const user = useSelector(selectUser);
+
   const metadata = {
     contentType: 'image/jpeg',
   };
 
   const takePhoto = async () => {
     const snap = await camera.takePictureAsync();
-    setPhoto(snap.uri);
+    setPhoto(snap.uri.toString());
     console.log('photo', snap, 'permission', permission, 'location', location);
     let address = await Location.reverseGeocodeAsync(location.coords);
     setAddress(address[0].city + ', ' + address[0].country);
   };
 
-  const createPost = async () => {
-    console.log(Date.now());
+  const uploadPhoto = async () => {
     const photoRef = ref(storage, 'photos/' + location.timestamp.toString() + '.jpg');
-    console.log(photoRef);
+    // console.log(photoRef);
     const response = await fetch(photo);
     const file = await response.blob();
-    const uploadTask = await uploadBytes(photoRef, photo, metadata);
+    const uploadTask = await uploadBytes(photoRef, file, metadata);
     // console.log(uploadTask);
     await getDownloadURL(uploadTask.ref).then(downloadURL => {
       console.log('Photo available at', downloadURL);
       setPhotoLink(downloadURL);
     });
-    // await uploadBytes(photoRef, file, metadata).then(snapshot => {
-    //   getDownloadURL(snapshot.ref).then(downloadURL => {
-    //     console.log('File available at', downloadURL);
-    //     setPhotoLink(downloadURL);
-    //   });
-    // });
+    // file.close();
+    // return;
+  };
+
+  const createPost = async () => {
+    await uploadPhoto();
+    try {
+      const docRef = await addDoc(collection(db, 'posts'), {
+        photo: photoLink,
+        comment: title,
+        location: address,
+        userId: user.userId,
+        login: user.login,
+      });
+      console.log('Document written with ID: ', docRef.id);
+    } catch (e) {
+      console.error('Error adding document: ', e);
+    }
   };
 
   useEffect(() => {
     (async () => {
-      // const cameraStatus =
       await requestPermission();
-      // console.log('cameraStatus', cameraStatus, 'permission', permission);
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied');
