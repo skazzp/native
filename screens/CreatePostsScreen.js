@@ -9,14 +9,13 @@ import { collection, addDoc } from 'firebase/firestore';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/auth/authSelectors';
 
-const CreatePostsScreen = () => {
+const CreatePostsScreen = ({ navigation }) => {
   const [photo, setPhoto] = useState(null);
   const [camera, setCamera] = useState(null);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [location, setLocation] = useState(null);
   const [title, setTitle] = useState(null);
   const [address, setAddress] = useState(null);
-  const [photoLink, setPhotoLink] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const user = useSelector(selectUser);
 
@@ -27,40 +26,49 @@ const CreatePostsScreen = () => {
   const takePhoto = async () => {
     const snap = await camera.takePictureAsync();
     setPhoto(snap.uri.toString());
-    console.log('photo', snap, 'permission', permission, 'location', location);
+    // console.log('photo', snap, 'permission', permission, 'location', location);
     let address = await Location.reverseGeocodeAsync(location.coords);
     setAddress(address[0].city + ', ' + address[0].country);
   };
 
   const uploadPhoto = async () => {
     const photoRef = ref(storage, 'photos/' + location.timestamp.toString() + '.jpg');
-    // console.log(photoRef);
     const response = await fetch(photo);
     const file = await response.blob();
     const uploadTask = await uploadBytes(photoRef, file, metadata);
-    // console.log(uploadTask);
-    await getDownloadURL(uploadTask.ref).then(downloadURL => {
-      console.log('Photo available at', downloadURL);
-      setPhotoLink(downloadURL);
-    });
-    // file.close();
-    // return;
+    const url = await getDownloadURL(uploadTask.ref);
+    console.log('Photo available at', url);
+    return url;
   };
 
   const createPost = async () => {
-    await uploadPhoto();
+    const url = await uploadPhoto();
+    const newPost = {
+      photo: url,
+      title: title,
+      location,
+      address,
+      userId: user.userId,
+      login: user.login,
+      commentsCount: 0,
+    };
+    console.log('newPOST', newPost);
     try {
-      const docRef = await addDoc(collection(db, 'posts'), {
-        photo: photoLink,
-        comment: title,
-        location: address,
-        userId: user.userId,
-        login: user.login,
-      });
+      const docRef = await addDoc(collection(db, 'posts'), newPost);
       console.log('Document written with ID: ', docRef.id);
     } catch (e) {
       console.error('Error adding document: ', e);
     }
+    await resetState();
+    navigation.navigate('Default', { newPost });
+  };
+
+  const resetState = async () => {
+    setPhoto(null);
+    setTitle(null);
+    setAddress(null);
+    // setLocation(null);
+    // setPhotoLink(null);
   };
 
   useEffect(() => {
