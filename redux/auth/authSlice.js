@@ -31,14 +31,6 @@ const authSlice = createSlice({
 
   reducers: {
     updateUserData(state, action) {
-      // const { email, login, photoURL, userId, isLoggedIn } = action.payload;
-      // state.user = {
-      //   email,
-      //   login,
-      //   photoURL,
-      //   userId,
-      // };
-      // state.isLoggedIn = isLoggedIn;
       state.user = { ...state.user, ...action.payload };
     },
     updateLoginState(state, action) {

@@ -54,6 +54,7 @@ const PostsScreen = ({ navigation }) => {
         component={CommentsScreen}
         options={{
           title: 'Comments',
+          tabBarStyle: { display: 'none' },
           headerLeft: ({ focused, size, color }) => (
             <TouchableOpacity onPress={() => navigation.navigate('Default')}>
               <Feather name="arrow-left" size={24} color="black" />

@@ -6,24 +6,40 @@ import {
   signOut,
   updateProfile,
 } from 'firebase/auth';
-import { auth } from '../../firebase/config';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { auth, storage } from '../../firebase/config';
 import { updateUserData } from './authSlice';
 
+const metadata = {
+  contentType: 'image/jpeg',
+};
+
+const uploadPhoto = async image => {
+  const photoRef = ref(storage, 'avatars/' + Date.now() + '.jpg');
+  const response = await fetch(image);
+  const file = await response.blob();
+  const uploadTask = await uploadBytes(photoRef, file, metadata);
+  const url = await getDownloadURL(uploadTask.ref);
+  console.log('Photo available at', url);
+  return url;
+};
+
 export const registerUser = createAsyncThunk('auth/registerUser ', async (user, thunkApi) => {
-  const { email, login, password } = user;
-  console.log('operation', login, password);
+  const { email, login, password, image } = user;
+  console.log('operation', image);
   try {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
     console.log('response', user);
+    const url = await uploadPhoto(image);
     await updateProfile(auth.currentUser, {
       displayName: login,
-      photoURL: 'https://example.com/jane-q-user/profile.jpg',
+      photoURL: url,
     });
     return {
       login,
       email: user.email,
       userId: user.uid,
-      photoURL: 'https://example.com/jane-q-user/profile.jpg',
+      photoURL: url,
     };
   } catch (error) {
     const errorCode = error.code;

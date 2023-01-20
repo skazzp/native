@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useRoute } from '@react-navigation/native';
 import useRouter from '../router';
 import { refreshUser } from '../redux/auth/authOperation';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -10,8 +10,8 @@ import { auth } from '../firebase/config';
 const Main = () => {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
-  const routing = useRouter(isLoggedIn);
 
+  const routing = useRouter(isLoggedIn);
   useEffect(() => {
     onAuthStateChanged(auth, user => {
       if (user) {

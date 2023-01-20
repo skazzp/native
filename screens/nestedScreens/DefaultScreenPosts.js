@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, Image, Button, Text, TouchableOpacity } from 'react-native';
 import { db } from '../../firebase/config';
-import { collection, getCountFromServer, getDocs, onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getCountFromServer,
+  getDocs,
+  onSnapshot,
+  updateDoc,
+} from 'firebase/firestore';
 import { Feather } from '@expo/vector-icons';
 
 const DefaultScreenPosts = ({ route, navigation }) => {
@@ -11,6 +18,13 @@ const DefaultScreenPosts = ({ route, navigation }) => {
   const getPosts = async () => {
     onSnapshot(collection(db, 'posts'), data => {
       setPosts(data.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+    });
+  };
+
+  const addLike = async item => {
+    console.log(item);
+    await updateDoc(doc(db, 'posts', item.id), {
+      likes: item.likes + 1,
     });
   };
 
@@ -33,7 +47,7 @@ const DefaultScreenPosts = ({ route, navigation }) => {
             }}
           >
             <Image source={{ uri: item.photo }} style={{ width: 343, height: 240 }} />
-            <View>
+            <View style={{ justifyContent: 'flex-start', flex: 1 }}>
               <Text>{item.title}</Text>
             </View>
             <View
@@ -45,17 +59,41 @@ const DefaultScreenPosts = ({ route, navigation }) => {
                 justifyContent: 'space-between',
               }}
             >
-              <TouchableOpacity
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'flex-start',
-                }}
-                onPress={() => navigation.navigate('Comments', { postId: item.id })}
-              >
-                <Feather name="message-circle" size={24} color="black" />
-                <Text>{item.commentsCount}</Text>
-              </TouchableOpacity>
+              <View style={{ flexDirection: 'row' }}>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    marginRight: 10,
+                  }}
+                  onPress={() => navigation.navigate('Comments', { postId: item.id })}
+                >
+                  <Feather
+                    name="message-circle"
+                    size={24}
+                    color={+item.commentsCount > 0 ? '#FF6C00' : '#BDBDBD'}
+                  />
+                  <Text>{item.commentsCount}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                  }}
+                  onPress={() => {
+                    addLike(item);
+                  }}
+                >
+                  <Feather
+                    name="thumbs-up"
+                    size={24}
+                    color={+item.likes > 0 ? '#FF6C00' : '#BDBDBD'}
+                  />
+                  <Text>{item.likes}</Text>
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity
                 style={{
                   flexDirection: 'row',
@@ -65,7 +103,7 @@ const DefaultScreenPosts = ({ route, navigation }) => {
                 onPress={() => navigation.navigate('Map', { location: item.location.coords })}
               >
                 <Feather name="map-pin" size={24} color="black" />
-                <Text>{item.address}</Text>
+                <Text>{item.address.split(', ')[1]}</Text>
               </TouchableOpacity>
             </View>
           </View>

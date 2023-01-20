@@ -26,6 +26,10 @@ const initialState = {
   password: '',
 };
 
+const metadata = {
+  contentType: 'image/jpeg',
+};
+
 const RegistrationScreen = ({ navigation }) => {
   const [showPass, onShowPass] = useState(true);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -46,8 +50,6 @@ const RegistrationScreen = ({ navigation }) => {
   };
 
   const pickImage = async () => {
-    //  const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -64,8 +66,8 @@ const RegistrationScreen = ({ navigation }) => {
 
   const onShow = () => onShowPass(prevShow => !prevShow);
 
-  const handleSubmit = () => {
-    dispatch(registerUser(state));
+  const handleSubmit = async () => {
+    dispatch(registerUser({ ...state, image }));
     keyboarHide();
   };
 

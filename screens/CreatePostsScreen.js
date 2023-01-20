@@ -51,6 +51,7 @@ const CreatePostsScreen = ({ navigation }) => {
       userId: user.userId,
       login: user.login,
       commentsCount: 0,
+      likes: 0,
     };
     console.log('newPOST', newPost);
     try {
@@ -141,6 +142,18 @@ const CreatePostsScreen = ({ navigation }) => {
           <Text style={photo ? styles.sendBtnText : styles.sendBtnTextDisabled}>Create post</Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.trashIconBox}>
+        <TouchableOpacity
+          style={styles.trashIcon}
+          activeOpacity={0.7}
+          onPress={async () => {
+            await resetState();
+            navigation.navigate('Default');
+          }}
+        >
+          <Feather name="trash-2" size={24} color="#DADADA" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -148,6 +161,7 @@ const CreatePostsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#E5E5E5',
   },
   cameraBox: {
     overflow: 'hidden',
@@ -232,6 +246,26 @@ const styles = StyleSheet.create({
     color: '#BDBDBD',
     fontSize: 16,
     fontFamily: 'Roboto-Regular',
+  },
+  trashIconBox: {
+    marginTop: 'auto',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginBottom: 20,
+    justifyContent: 'center',
+    width: 70,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F6F6F6',
+  },
+  trashIcon: {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    // alignItems: "center",
+    justifyContent: 'center',
+    width: 24,
+    height: 24,
+    color: '#FFFFFF',
   },
 });
 

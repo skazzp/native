@@ -24,7 +24,7 @@ const CommentsScreen = ({ route }) => {
   const [comment, setComment] = useState('');
   const [allComments, setAllComments] = useState([]);
   const { login } = useSelector(state => state.auth.user);
-
+  console.log('route', route);
   const createPost = async () => {
     const docRef = await addDoc(collection(db, 'posts', postId, 'comments'), {
       comment: comment,
@@ -34,6 +34,7 @@ const CommentsScreen = ({ route }) => {
     await updateDoc(doc(db, 'posts', postId), {
       commentsCount: allComments.length + 1,
     });
+    setComment('');
   };
 
   const getAllPosts = async () => {
@@ -61,9 +62,9 @@ const CommentsScreen = ({ route }) => {
         />
       </SafeAreaView>
       <View style={styles.inputContainer}>
-        <TextInput style={styles.input} onChangeText={setComment} />
+        <TextInput style={styles.input} onChangeText={setComment} value={comment} />
       </View>
-      <TouchableOpacity onPress={createPost} style={styles.sendBtn}>
+      <TouchableOpacity onPress={createPost} style={styles.sendBtn} disabled={!comment}>
         <Text style={styles.sendLabel}>add post</Text>
       </TouchableOpacity>
     </View>
