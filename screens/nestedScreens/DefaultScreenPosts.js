@@ -49,7 +49,7 @@ const DefaultScreenPosts = ({ route, navigation }) => {
             <View style={{ width: '100%', height: 250, borderRadius: 8, overflow: 'hidden' }}>
               <Image source={{ uri: item.photo }} style={{ width: '100%', height: '100%' }} />
             </View>
-            <View style={{ justifyContent: 'flex-start', flex: 1 }}>
+            <View style={{ marginTop: 8, width: '100%', marginBottom: 8 }}>
               <Text>{item.title}</Text>
             </View>
             <View
@@ -59,6 +59,7 @@ const DefaultScreenPosts = ({ route, navigation }) => {
                 flex: 1,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
+                marginBottom: 10,
               }}
             >
               <View style={{ flexDirection: 'row' }}>

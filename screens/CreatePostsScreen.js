@@ -4,9 +4,11 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  Keyboard,
   TextInput,
   Dimensions,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { Camera } from 'expo-camera';
 import { useEffect, useState } from 'react';
@@ -17,6 +19,7 @@ import { db, storage } from '../firebase/config';
 import { collection, addDoc } from 'firebase/firestore';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/auth/authSelectors';
+import * as ImagePicker from 'expo-image-picker';
 
 const CreatePostsScreen = ({ navigation }) => {
   const [photo, setPhoto] = useState(null);
@@ -88,6 +91,21 @@ const CreatePostsScreen = ({ navigation }) => {
     // setPhotoLink(null);
   };
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setPhoto(result.assets[0].uri);
+    }
+  };
+
   useEffect(() => {
     (async () => {
       await requestPermission();
@@ -110,69 +128,76 @@ const CreatePostsScreen = ({ navigation }) => {
     // <View>
     //   <Text>CreatePostsScreen</Text>
     // </View>
-    <View style={styles.container}>
-      <KeyboardAvoidingView style={{}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <View style={styles.cameraBox}>
-          {photo ? (
-            <View style={styles.takePhotoContainer}>
-              <Image source={{ uri: photo }} style={styles.camera} />
-            </View>
-          ) : (
-            <Camera style={styles.camera} ref={setCamera}>
-              <TouchableOpacity
-                onPress={takePhoto}
-                // style={styles.snapContainer}
-              >
-                <View style={styles.snapContainer}>
-                  <Feather name="camera" size={24} color="#FFFFFF" />
-                </View>
-              </TouchableOpacity>
-            </Camera>
-          )}
+    <TouchableWithoutFeedback onPress={keyboarHide}>
+      <View style={styles.container}>
+        <KeyboardAvoidingView style={{}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <View style={styles.cameraBox}>
+            {photo ? (
+              <View style={styles.takePhotoContainer}>
+                <Image source={{ uri: photo }} style={styles.camera} />
+              </View>
+            ) : (
+              <Camera style={styles.camera} ref={setCamera}>
+                <TouchableOpacity
+                  onPress={takePhoto}
+                  // style={styles.snapContainer}
+                >
+                  <View style={styles.snapContainer}>
+                    <Feather name="camera" size={24} color="#FFFFFF" />
+                  </View>
+                </TouchableOpacity>
+              </Camera>
+            )}
+          </View>
+          <TouchableOpacity style={styles.pickPhotoBtn} onPress={pickImage}>
+            <Text style={{ color: '#BDBDBD', fontSize: 16, lineHeight: 19 }}>Choose photo ...</Text>
+          </TouchableOpacity>
+          <View style={styles.titleBox}>
+            <TextInput
+              style={styles.inputTitle}
+              placeholder="Title"
+              placeholderTextColor="#BDBDBD"
+              keyboardType="visible-password"
+              value={title}
+              onChangeText={value => setTitle(value)}
+              onFocus={() => setIsShowKeyboard(true)}
+            />
+          </View>
+          <View style={styles.locationBox}>
+            <TextInput
+              style={styles.inputLocation}
+              placeholder="Location"
+              placeholderTextColor="#BDBDBD"
+              keyboardType="visible-password"
+              value={address}
+              onChangeText={value => setAddress(value)}
+              onFocus={() => setIsShowKeyboard(true)}
+            />
+          </View>
+        </KeyboardAvoidingView>
+        <View>
+          <TouchableOpacity
+            onPress={createPost}
+            style={photo ? styles.sendBtn : styles.sendBtnDisabled}
+            disabled={!photo}
+          >
+            <Text style={photo ? styles.sendBtnText : styles.sendBtnTextDisabled}>Create post</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.titleBox}>
-          <TextInput
-            style={styles.inputTitle}
-            placeholder="Title"
-            placeholderTextColor="#BDBDBD"
-            keyboardType="visible-password"
-            value={title}
-            onChangeText={value => setTitle(value)}
-          />
+        <View style={styles.trashIconBox}>
+          <TouchableOpacity
+            style={styles.trashIcon}
+            activeOpacity={0.7}
+            onPress={async () => {
+              await resetState();
+              navigation.navigate('Default');
+            }}
+          >
+            <Feather name="trash-2" size={24} color="#DADADA" />
+          </TouchableOpacity>
         </View>
-        <View style={styles.locationBox}>
-          <TextInput
-            style={styles.inputLocation}
-            placeholder="Location"
-            placeholderTextColor="#BDBDBD"
-            keyboardType="visible-password"
-            value={address}
-            onChangeText={value => setAddress(value)}
-          />
-        </View>
-      </KeyboardAvoidingView>
-      <View>
-        <TouchableOpacity
-          onPress={createPost}
-          style={photo ? styles.sendBtn : styles.sendBtnDisabled}
-          disabled={!photo}
-        >
-          <Text style={photo ? styles.sendBtnText : styles.sendBtnTextDisabled}>Create post</Text>
-        </TouchableOpacity>
       </View>
-      <View style={styles.trashIconBox}>
-        <TouchableOpacity
-          style={styles.trashIcon}
-          activeOpacity={0.7}
-          onPress={async () => {
-            await resetState();
-            navigation.navigate('Default');
-          }}
-        >
-          <Feather name="trash-2" size={24} color="#DADADA" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -194,6 +219,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  pickPhotoBtn: { marginTop: 5, paddingLeft: 16 },
   snap: {
     color: '#fff',
   },
