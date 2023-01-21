@@ -75,7 +75,7 @@ export default function ProfileScreen({ navigation }) {
                   <View style={{ width: '100%', height: 250, borderRadius: 8, overflow: 'hidden' }}>
                     <Image source={{ uri: item.photo }} style={{ width: '100%', height: '100%' }} />
                   </View>
-                  <View>
+                  <View style={{ marginTop: 5, width: '100%', paddingHorizontal: 16 }}>
                     <Text>{item.title}</Text>
                   </View>
                   <View
