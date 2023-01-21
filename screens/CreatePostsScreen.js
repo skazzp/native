@@ -1,4 +1,13 @@
-import { View, Image, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import {
+  View,
+  Image,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Dimensions,
+  KeyboardAvoidingView,
+} from 'react-native';
 import { Camera } from 'expo-camera';
 import { useEffect, useState } from 'react';
 import { Feather } from '@expo/vector-icons';
@@ -18,9 +27,16 @@ const CreatePostsScreen = ({ navigation }) => {
   const [address, setAddress] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const user = useSelector(selectUser);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
 
   const metadata = {
     contentType: 'image/jpeg',
+  };
+
+  const keyboarHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+    console.log(state);
   };
 
   const takePhoto = async () => {
@@ -95,44 +111,46 @@ const CreatePostsScreen = ({ navigation }) => {
     //   <Text>CreatePostsScreen</Text>
     // </View>
     <View style={styles.container}>
-      <View style={styles.cameraBox}>
-        {photo ? (
-          <View style={styles.takePhotoContainer}>
-            <Image source={{ uri: photo }} style={styles.camera} />
-          </View>
-        ) : (
-          <Camera style={styles.camera} ref={setCamera}>
-            <TouchableOpacity
-              onPress={takePhoto}
-              // style={styles.snapContainer}
-            >
-              <View style={styles.snapContainer}>
-                <Feather name="camera" size={24} color="#FFFFFF" />
-              </View>
-            </TouchableOpacity>
-          </Camera>
-        )}
-      </View>
-      <View style={styles.titleBox}>
-        <TextInput
-          style={styles.inputTitle}
-          placeholder="Title"
-          placeholderTextColor="#BDBDBD"
-          keyboardType="visible-password"
-          value={title}
-          onChangeText={value => setTitle(value)}
-        />
-      </View>
-      <View style={styles.locationBox}>
-        <TextInput
-          style={styles.inputLocation}
-          placeholder="Location"
-          placeholderTextColor="#BDBDBD"
-          keyboardType="visible-password"
-          value={address}
-          onChangeText={value => setAddress(value)}
-        />
-      </View>
+      <KeyboardAvoidingView style={{}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <View style={styles.cameraBox}>
+          {photo ? (
+            <View style={styles.takePhotoContainer}>
+              <Image source={{ uri: photo }} style={styles.camera} />
+            </View>
+          ) : (
+            <Camera style={styles.camera} ref={setCamera}>
+              <TouchableOpacity
+                onPress={takePhoto}
+                // style={styles.snapContainer}
+              >
+                <View style={styles.snapContainer}>
+                  <Feather name="camera" size={24} color="#FFFFFF" />
+                </View>
+              </TouchableOpacity>
+            </Camera>
+          )}
+        </View>
+        <View style={styles.titleBox}>
+          <TextInput
+            style={styles.inputTitle}
+            placeholder="Title"
+            placeholderTextColor="#BDBDBD"
+            keyboardType="visible-password"
+            value={title}
+            onChangeText={value => setTitle(value)}
+          />
+        </View>
+        <View style={styles.locationBox}>
+          <TextInput
+            style={styles.inputLocation}
+            placeholder="Location"
+            placeholderTextColor="#BDBDBD"
+            keyboardType="visible-password"
+            value={address}
+            onChangeText={value => setAddress(value)}
+          />
+        </View>
+      </KeyboardAvoidingView>
       <View>
         <TouchableOpacity
           onPress={createPost}
@@ -165,7 +183,7 @@ const styles = StyleSheet.create({
   },
   cameraBox: {
     overflow: 'hidden',
-    height: '40%',
+    height: 250,
     marginHorizontal: 16,
     marginTop: 32,
     borderRadius: 8,

@@ -46,7 +46,9 @@ const DefaultScreenPosts = ({ route, navigation }) => {
               alignItems: 'center',
             }}
           >
-            <Image source={{ uri: item.photo }} style={{ width: 343, height: 240 }} />
+            <View style={{ width: '100%', height: 250, borderRadius: 8, overflow: 'hidden' }}>
+              <Image source={{ uri: item.photo }} style={{ width: '100%', height: '100%' }} />
+            </View>
             <View style={{ justifyContent: 'flex-start', flex: 1 }}>
               <Text>{item.title}</Text>
             </View>

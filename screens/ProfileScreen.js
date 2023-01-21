@@ -72,7 +72,9 @@ export default function ProfileScreen({ navigation }) {
                     alignItems: 'center',
                   }}
                 >
-                  <Image source={{ uri: item.photo }} style={{ width: 343, height: 240 }} />
+                  <View style={{ width: '100%', height: 250, borderRadius: 8, overflow: 'hidden' }}>
+                    <Image source={{ uri: item.photo }} style={{ width: '100%', height: '100%' }} />
+                  </View>
                   <View>
                     <Text>{item.title}</Text>
                   </View>
@@ -149,7 +151,7 @@ const styles = StyleSheet.create({
   },
   textlogin: {
     fontSize: 30,
-    marginBottom: 30,
+    marginBottom: 15,
     textAlign: 'center',
   },
   image: {
@@ -158,7 +160,7 @@ const styles = StyleSheet.create({
   },
   form: {
     paddingHorizontal: 16,
-    paddingTop: 92,
+    paddingTop: 65,
     marginTop: 300,
     height: '100%',
     backgroundColor: '#ffffff',

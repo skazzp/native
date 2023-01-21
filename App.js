@@ -8,7 +8,6 @@ export default function App() {
   if (!isLoadingComplete) {
     return null;
   }
-  // // const routing = useRouter(false);
 
   return (
     <Provider store={store}>

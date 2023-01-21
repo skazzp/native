@@ -1,3 +1,4 @@
+import { useNavigationState, useRoute } from '@react-navigation/native';
 import {
   addDoc,
   collection,
@@ -16,15 +17,21 @@ import {
   SafeAreaView,
   FlatList,
 } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { db } from '../../firebase/config';
+import { updateRoute } from '../../redux/auth/authSlice';
 
 const CommentsScreen = ({ route }) => {
   const { postId } = route.params;
   const [comment, setComment] = useState('');
   const [allComments, setAllComments] = useState([]);
   const { login } = useSelector(state => state.auth.user);
+  const dispatch = useDispatch();
+
   console.log('route', route);
+  // const index = useNavigationState(state => state);
+  // console.log('index', index);
+
   const createPost = async () => {
     const docRef = await addDoc(collection(db, 'posts', postId, 'comments'), {
       comment: comment,
@@ -45,6 +52,7 @@ const CommentsScreen = ({ route }) => {
 
   useEffect(() => {
     getAllPosts();
+    dispatch(updateRoute(true));
   }, []);
 
   return (

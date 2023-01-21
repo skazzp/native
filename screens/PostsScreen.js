@@ -6,6 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { logOutUser } from '../redux/auth/authOperation';
+import { updateRoute } from '../redux/auth/authSlice';
 
 const NestedScreen = createStackNavigator();
 
@@ -56,7 +57,12 @@ const PostsScreen = ({ navigation }) => {
           title: 'Comments',
           tabBarStyle: { display: 'none' },
           headerLeft: ({ focused, size, color }) => (
-            <TouchableOpacity onPress={() => navigation.navigate('Default')}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('Default');
+                dispatch(updateRoute(false));
+              }}
+            >
               <Feather name="arrow-left" size={24} color="black" />
             </TouchableOpacity>
           ),
@@ -65,7 +71,26 @@ const PostsScreen = ({ navigation }) => {
           },
         }}
       />
-      <NestedScreen.Screen name="Map" component={MapScreen} options={{ title: 'Map' }} />
+      <NestedScreen.Screen
+        name="Map"
+        component={MapScreen}
+        options={{
+          title: 'Map',
+          headerLeft: ({ focused, size, color }) => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('Default');
+                dispatch(updateRoute(false));
+              }}
+            >
+              <Feather name="arrow-left" size={24} color="black" />
+            </TouchableOpacity>
+          ),
+          headerLeftContainerStyle: {
+            paddingLeft: 16,
+          },
+        }}
+      />
     </NestedScreen.Navigator>
   );
 };

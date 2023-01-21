@@ -7,7 +7,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
 import { Feather } from '@expo/vector-icons';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useNavigationState, useRoute } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 const addPostIcon = require('./assets/images/new.png');
 
@@ -62,13 +62,12 @@ const useRouter = isAuth => {
         name="Posts"
         component={PostsScreen}
         options={({ route }) => ({
-          tabBarStyle: myState.isLoggedIn ? { display: 'none' } : { display: 'flex' },
+          tabBarStyle: myState.route ? { display: 'none' } : { display: 'flex' },
           headerShown: false,
-          tabBarIcon: ({ focused, size, color }) => <Feather name="grid" size={24} color="black" />,
+          tabBarIcon: ({ focused, size, color }) => {
+            return <Feather name="grid" size={24} color="black" />;
+          },
         })}
-        // options={{
-
-        // }}
       />
       <MainTab.Screen
         name="Create"

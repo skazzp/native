@@ -12,6 +12,7 @@ const userInitialState = {
   isLoggedIn: false,
   isLoading: false,
   error: '',
+  route: false,
 };
 
 const pendingHandlerAuth = (state, action) => {
@@ -35,6 +36,9 @@ const authSlice = createSlice({
     },
     updateLoginState(state, action) {
       state.isLoggedIn = action.payload;
+    },
+    updateRoute(state, action) {
+      state.route = action.payload;
     },
   },
   extraReducers: builder => {
@@ -79,4 +83,4 @@ const authSlice = createSlice({
 });
 
 export const authReducer = authSlice.reducer;
-export const { updateUserData, updateLoginState } = authSlice.actions;
+export const { updateUserData, updateLoginState, updateRoute } = authSlice.actions;
