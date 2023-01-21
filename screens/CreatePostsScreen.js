@@ -39,7 +39,6 @@ const CreatePostsScreen = ({ navigation }) => {
   const keyboarHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    console.log(state);
   };
 
   const takePhoto = async () => {
